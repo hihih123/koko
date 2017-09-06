@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycompany.groupMsg.dao.IDao">
+
+	<!-- 회원 관리 -->
+	
+	<!-- 회원 정보 얻기 -->
+	<select id="getMemberDao" resultType="com.mycompany.groupMsg.dto.MemberDto">
+		select serial, id, firstName, lastName from members where id = #{param1} limit 1
+	</select>
+	<!-- 회원 정보 얻기 -->
+	<select id="getMemberDao2" resultType="com.mycompany.groupMsg.dto.MemberDto">
+		select serial, id, firstName, lastName from members where id = #{param1} and pw = password(#{param2})  limit 1 
+	</select>
+	<!-- 회원 추가 -->
+	<insert id="addMemberDao">
+		insert into members (id, pw, firstName, lastName) values(#{param1}, password(#{param2}), #{param3}, #{param4}) 
+	</insert>
+	
+	<!-- 그룹 관리 -->
+	
+	<!-- 그룹 정보 얻기 -->
+	<select id="getGroupDao" resultType="com.mycompany.groupMsg.dto.GroupDto">
+		select a.serial, a.memberSerial, a.name, a.purpose, a.numMember from groups as a left join groupmembers as b on a.serial = b.groupSerial where b.memberSerial = #{param1} 
+	</select>
+	<!-- 그룹 정보 얻기 -->
+	<select id="getGroupDao2" resultType="com.mycompany.groupMsg.dto.GroupDto">
+		select serial, memberSerial, name, purpose, numMember from groups where memberSerial = #{param1} and name = #{param2} limit 1
+	</select>
+	<!-- 그룹 정보 얻기 -->
+	<select id="getGroupDao3" resultType="com.mycompany.groupMsg.dto.GroupDto">
+		select serial, memberSerial, name, purpose, numMember from groups where serial = #{param1} limit 1
+	</select>
+	<!-- 그룹 추가 -->
+	<insert id="addGroupDao" parameterType="com.mycompany.groupMsg.dto.GroupDto" useGeneratedKeys="true" keyProperty="serial">
+		insert into groups (memberSerial, name, purpose, numMember) values(#{memberSerial}, #{name}, #{purpose}, 0)
+	</insert>
+	
+	<!-- 그룹에 참여 인원수 1증가 -->
+	<update id="updateGroupDao">
+		update groups set numMember = numMember + #{param2} where serial = #{param1}
+	</update>
+	
+	<!-- 할일 관리 -->
+	
+	<!-- 할일 정보 얻기 -->
+	<select id="getTaskDao" resultType="com.mycompany.groupMsg.dto.TaskDto">
+		select serial, groupSerial, memberSerial, name, regDate, expiredDate, todo, isCompleted from tasks where groupSerial = #{param1} and isCompleted = false order by regDate desc
+	</select>
+	<!-- 완료된 할일 정보 얻기 -->
+	<select id="getTaskDoneDao" resultType="com.mycompany.groupMsg.dto.TaskDto">
+		select serial, groupSerial, memberSerial, name, regDate, expiredDate, todo, isCompleted from tasks where groupSerial = #{param1} and isCompleted = true order by regDate desc
+	</select>
+	<!-- 할일 추가-->
+	<insert id="addTaskDao">
+		insert into tasks (groupSerial, memberSerial, name, regDate, expiredDate, todo, isCompleted) values(#{param1}, #{param2}, #{param3}, now(), null, #{param4}, false) 
+	</insert>
+	<!-- 할일 추가-->
+	<update id="updateTaskDao">
+		update tasks set isCompleted = true, expiredDate=now() where serial = #{param1} and memberSerial = #{param2} 
+	</update>
+	
+	<!-- 그룹멤버 관리 -->
+	
+	<!-- 그룹멤버 추가 -->
+	<insert id="addGroupMemberDao">
+		insert into groupMembers (groupSerial, memberSerial, id, regDate, isMaster) values (#{param1}, #{param2}, #{param3}, now(), #{param4})
+	</insert>
+	<!-- 그룹멤버 삭제 -->
+	<insert id="delGroupMemberDao">
+		delete from groupMembers where serial = #{param1}
+	</insert>
+	<!-- 그룹멤버 정보 얻기 -->
+	<select id="getGroupMemberDao" resultType="com.mycompany.groupMsg.dto.GroupMemberDto">
+		select serial, groupSerial, memberSerial, id, regDate, isMaster from groupmembers where groupSerial = #{param1} order by regDate desc
+	</select>
+	<!-- 그룹멤버 정보 얻기 -->
+	<select id="getGroupMemberDao2" resultType="com.mycompany.groupMsg.dto.GroupMemberDto">
+		select serial, groupSerial, memberSerial, id, regDate, isMaster from groupmembers where groupSerial = #{param1} and id = #{param2} order by regDate desc
+	</select>
+	
+	
+
+
+</mapper>

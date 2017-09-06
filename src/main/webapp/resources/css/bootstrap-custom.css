@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+
+
+.bg--white, .input-group .bg--white {
+	background-color: white;
+    resize: none;
+}
+
+.bg--primary, .input-group .bg--primary {
+	background-color: #337ab7;
+	color: white;
+}
+
+.bg--hidden{
+	visibility: hidden;
+}
+
